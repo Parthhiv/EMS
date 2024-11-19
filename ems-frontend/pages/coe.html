@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COE Portal</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<style>
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .navbar {
+        background-color: #49688e;
+        color: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .navbar-brand {
+        font-size: 1.5em;
+    }
+    
+    .logout a {
+        color: white;
+        text-decoration: none;
+    }
+    
+    h2 {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .tabs {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+    }
+    
+    .tab-button {
+        padding: 10px 20px;
+        margin: 0 5px;
+        background-color: #49688e;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .tab-button.active {
+        background-color: #345675;
+    }
+    
+    .tab-content {
+        display: none;
+        padding: 20px;
+        background: white;
+        max-width: 600px;
+        margin: 0 auto;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .tab-content.active {
+        display: block;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    .form-group select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    
+    .form-actions {
+        text-align: center;
+    }
+    
+    .form-actions button {
+        padding: 10px 20px;
+        margin: 0 10px;
+        background-color: #49688e;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    
+    form button:hover {
+        background-color: #345675;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    footer {
+        text-align: center;
+        padding: 10px;
+        background-color: #49688e;
+        color: white;
+        margin-top: 20px;
+    }
+    
+    </style>
+    
+<body>
+    <header>
+        <div class="navbar">
+            <div class="navbar-brand">COE Portal</div>
+            <div class="logout">
+                <a href="#">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <h2>Welcome, Controller of Examination</h2>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('sendRequest')">Send Request</button>
+            <button class="tab-button" onclick="showTab('requestStatus')">Request Status</button>
+        </div>
+
+        <div id="sendRequest" class="tab-content active">
+            <h3>Send Paper Request</h3>
+            <form id="requestForm">
+                <div class="form-group">
+                    <label for="course">Select Course:</label>
+                    <select id="course" required>
+                        <option value="BE">B.E.</option>
+                        <option value="ME">M.E.</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="semester">Select Semester:</label>
+                    <select id="semester" required>
+                        <option value="1">I</option>
+                        <option value="2">II</option>
+                        <option value="3">III</option>
+                        <option value="4">IV</option>
+                        <option value="5">V</option>
+                        <option value="6">VI</option>
+                        <option value="7">VII</option>
+                        <option value="8">VIII</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="branch">Select Branch:</label>
+                    <select id="branch" required>
+                        <option value="CSE">CSE</option>
+                        <option value="IT">IT</option>
+                        <option value="ECE">ECE</option>
+                        <option value="EEE">EEE</option>
+                        <option value="Mech">Mech</option>
+                        <option value="BioTech">BioTech</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Select Subject:</label>
+                    <select id="subject" required>
+                        <option value="CompilerDesign">Compiler Design</option>
+                        <option value="DSP">Digital Signal Processing</option>
+                        <option value="CloudComputing">Cloud Computing</option>
+                        <option value="AgileDev">Agile Development</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="superintendent">Select Superintendent:</label>
+                    <select id="superintendent" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="teacher">Select Teacher:</label>
+                    <select id="teacher" required></select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="submitRequest()">Submit</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="requestStatus" class="tab-content">
+            <h3>Request Status</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Teacher's Name</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="statusTableBody">
+                    <!-- Dynamic rows will be injected here -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+        <p>COE Portal © 2024</p>
+    </footer>
+
+    <script>
+        // API endpoint URLs for teacher, superintendent, and request status
+        const TEACHER_API = 'http://localhost:8080/api/coe/teachers';
+        const SUPERINTENDENT_API = 'http://localhost:8080/api/coe/superintendents';
+        const REQUEST_STATUS_API = 'http://localhost:8080/api/request-status';
+async function fetchOptions(url, elementId) {
+    try {
+        const response = await fetch(url)
+
+        if (!response.ok) {
+            // Log if the response is not ok (status not in the range 200-299)
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const selectElement = document.getElementById(elementId);
+        selectElement.innerHTML = ""; // Clear existing options
+
+        // Add default placeholder option
+        const defaultOption = document.createElement("option");
+        defaultOption.text = "Select an option";
+        defaultOption.value = "";
+        selectElement.appendChild(defaultOption);
+
+        // Add fetched options
+        data.forEach(item => {
+            if (item.id && item.name) { // Ensure both id and name are available
+                const option = document.createElement("option");
+                option.text = `${item.id} - ${item.name}`; // Display ID and Name
+                option.value = item.id; // Use ID as the value
+                selectElement.appendChild(option);
+            } else {
+                // Handle cases where either ID or Name is missing, though unlikely in your case
+                const option = document.createElement("option");
+                option.text = "Unknown"; // Fallback text
+                option.value = ""; // Use empty value for invalid options
+                selectElement.appendChild(option);
+            }
+        });
+    } catch (error) {
+        // Log the error message in case of failure
+        console.error('Error fetching options:', error.message);
+    }
+}
+
+
+
+        // Function to fetch and display request status
+        async function fetchRequestStatus() {
+            try {
+                const response = await fetch(REQUEST_STATUS_API);
+                const data = await response.json();
+                const statusTableBody = document.getElementById("statusTableBody");
+                statusTableBody.innerHTML = ""; // Clear existing rows
+
+                // Add dynamic rows
+                data.forEach(status => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = ` 
+                        <td>${status.teacherName}</td>
+                        <td>${status.status}</td>
+                    `;
+                    statusTableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching request status:', error);
+            }
+        }
+
+        // Call the fetch functions on page load
+        window.onload = function () {
+            fetchOptions(SUPERINTENDENT_API, "superintendent");
+            fetchOptions(TEACHER_API, "teacher");
+            fetchRequestStatus();
+        };
+
+        // Tab switching function
+        function showTab(tabId) {
+            const contents = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-button');
+            contents.forEach(content => content.classList.remove('active'));
+            buttons.forEach(button => button.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Placeholder function for button action
+        function submitRequest() {
+            alert("Request Submitted");
+        }
+    </script>
+</body>
+</html>
