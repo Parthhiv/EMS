@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loginForm.addEventListener("submit", async (event) => {
         event.preventDefault(); // Prevent form submission
 
-        const username = document.getElementById("username").value;
+        const id = document.getElementById("id").value;
         const password = document.getElementById("password").value;
 
         // Send credentials to the backend for verification
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    username: username,
+                    id: id,
                     password: password,
                     role: role, // Sending the role to identify the user type
                 }),
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const data = await response.json();
             if (response.ok && data.success) {
-                redirectToHomepage(role, username);
+                redirectToHomepage(role, id);
             } else {
                 alert(data.message || "Invalid credentials. Please try again.");
             }
@@ -65,12 +65,12 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Function to redirect to the homepage based on the role
-function redirectToHomepage(role, username) {
+function redirectToHomepage(role, id) {
     // Check the role and redirect to the corresponding homepage
     if (role === "superintendent") {
-        window.location.href = `../pages/superintendent.html?username=${username}`;
+        window.location.href = `../pages/superintendent.html?id=${id}`;
     } else if (role === "teacher") {
-        window.location.href = `../pages/teacher.html?username=${username}`;
+        window.location.href = `../pages/teacher.html?id=${id}`;
     } else if (role === "coe") {
         // Redirect to the COE homepage without username display
         window.location.href = `../pages/coe.html`;

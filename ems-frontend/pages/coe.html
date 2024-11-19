@@ -130,7 +130,7 @@
         <div class="navbar">
             <div class="navbar-brand">COE Portal</div>
             <div class="logout">
-                <a href="#">Logout</a>
+                <a href="#" onclick="logout()">Logout</a>
             </div>
         </div>
     </header>
@@ -225,8 +225,8 @@
         const TEACHER_API = 'http://localhost:8080/api/coe/teachers';
         const SUPERINTENDENT_API = 'http://localhost:8080/api/coe/superintendents';
         const REQUEST_STATUS_API = 'http://localhost:8080/api/request-status';
-async function fetchOptions(url, elementId) {
-    try {
+        async function fetchOptions(url, elementId) {
+        try {
         const response = await fetch(url)
 
         if (!response.ok) {
@@ -267,27 +267,119 @@ async function fetchOptions(url, elementId) {
 
 
 
-        // Function to fetch and display request status
-        async function fetchRequestStatus() {
-            try {
-                const response = await fetch(REQUEST_STATUS_API);
-                const data = await response.json();
-                const statusTableBody = document.getElementById("statusTableBody");
-                statusTableBody.innerHTML = ""; // Clear existing rows
+async function submitRequest() {
+    const teacherId = document.getElementById("teacherId").value;
+    const superintendentId = document.getElementById("superintendentId").value;
+    const course = document.getElementById("course").value;
+    const semester = document.getElementById("semester").value;
+    const branch = document.getElementById("branch").value;
+    const subject = document.getElementById("subject").value;
+    const status = document.getElementById("status").value;
 
-                // Add dynamic rows
-                data.forEach(status => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = ` 
-                        <td>${status.teacherName}</td>
-                        <td>${status.status}</td>
-                    `;
-                    statusTableBody.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error fetching request status:', error);
-            }
+    try {
+        const response = await fetch('http://localhost:8080/api/requests/coe/newrequest', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                teacherId: teacherId,
+                superintendentId: superintendentId,
+                course: course,
+                semester: semester,
+                branch: branch,
+                subject: subject,
+                status: status
+            })
+        });
+
+        // Check if the response is successful (status 200)
+        if (response.ok) {
+            const data = await response.json();  // Parse JSON response
+            console.log('Response Data:', data);
+            alert(data.message);  // Show success message
+        } else {
+            alert('Failed to submit the request.');
         }
+    } catch (error) {
+        console.error('Error fetching request status:', error);
+        alert('An error occurred');
+    }
+}
+
+
+
+
+
+function logout() {
+            fetch('http://localhost:8080/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include', // Include cookies for session handling
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => {
+                    if (response.ok) {
+                        localStorage.clear();
+                        sessionStorage.clear();
+
+                        // Redirect to the login page
+                        window.location.href = "http://127.0.0.1:5500/index.html";
+                    } else {
+                        alert('Logout failed. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during logout:', error);
+                    alert('An error occurred. Please try again.');
+                });
+        }
+
+
+        // Function to fetch and display request status
+        // Function to fetch and display request status
+async function fetchRequestStatus() {
+    try {
+        // Sample data to simulate API response
+        const data = [
+            {
+                teacherName: "Teacher 15", 
+                status: "Pending", 
+                course: "B.E.", 
+                semester: "I", 
+                branch: "CSE", 
+                subject: "Compiler Design", 
+                superintendentId: "37"
+            },
+            {
+                teacherName: "Teacher 35", 
+                status: "Pending", 
+                course: "B.E.", 
+                semester: "I", 
+                branch: "CSE", 
+                subject: "Cloud Computing", 
+                superintendentId: "37"
+            }
+        ];
+        
+        const statusTableBody = document.getElementById("statusTableBody");
+        statusTableBody.innerHTML = ""; // Clear existing rows
+
+        // Add dynamic rows
+        data.forEach(status => {
+            const row = document.createElement("tr");
+            row.innerHTML = ` 
+                <td>${status.teacherName}</td>
+                <td>${status.status}</td>
+            `;
+            statusTableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error fetching request status:', error);
+    }
+}
+
 
         // Call the fetch functions on page load
         window.onload = function () {
