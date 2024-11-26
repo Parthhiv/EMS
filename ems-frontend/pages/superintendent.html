@@ -89,6 +89,7 @@
     .card-link {
         color: #007bff;
         text-decoration: none;
+        cursor: pointer;
     }
 
     .card-link:hover {
@@ -114,7 +115,6 @@
             font-size: 1.5rem;
         }
     }
-
 </style>
 <body>
 
@@ -129,8 +129,40 @@
         <h4>Received Question Papers</h4>
         <hr>
         
-        <!-- Dynamic Cards will be appended here -->
-        <div id="cards-container"></div>
+        <!-- Static Sample Cards (Using your provided data) -->
+        <div id="cards-container">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Compiler Design</h5>
+                    <div class="details">
+                        Course: <span>Bachelor of Science</span><br>
+                        Semester: <span>1st Semester</span><br>
+                        Branch: <span>CSE</span><br>
+                        Question Paper: 
+                        <span>
+                            <a href="#" class="card-link download-paper">Download Paper</a>
+                        </span><br>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Cloud Computing</h5>
+                    <div class="details">
+                        Course: <span>Bachelor of Science</span><br>
+                        Semester: <span>1st Semester</span><br>
+                        Branch: <span>CSE</span><br>
+                        Question Paper: 
+                        <span>
+                            <a href="#" class="card-link download-paper">Download Paper</a>
+                        </span><br>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add more card elements as needed using the above structure -->
+        </div>
     </div>
 
     <!-- Footer Section -->
@@ -138,64 +170,8 @@
         <p>&copy; 2024 Examination Management System. All rights reserved.</p>
     </footer>
 
-    <!-- JavaScript to dynamically load cards and manage logout -->
+    <!-- JavaScript for logout and alert functionality -->
     <script>
-        // Function to get the username from the URL
-        function getIdFromUrl() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get("id");
-        }
-
-        // Update the navbar with the username
-        document.addEventListener("DOMContentLoaded", () => {
-            const id = getIdFromUrl(); // Fetch username from URL
-            const navbarBrand = document.querySelector(".navbar-brand"); // Select the navbar brand element
-            
-            if (id) {
-                navbarBrand.textContent = `Superintendent - ${id}`; // Display username
-            }
-        });
-
-        // Function to generate and display cards dynamically
-        function generateCards() {
-            // Fetch the paper requests from the backend
-            fetch('/get_paper_requests/')
-                .then(response => response.json())
-                .then(data => {
-                    const container = document.getElementById("cards-container");
-                    const papers = data.papers || []; // Handle undefined case
-
-                    // If no papers, show a message
-                    if (papers.length === 0) {
-                        container.innerHTML = '<p>No question papers assigned yet.</p>';
-                        return;
-                    }
-
-                    // Generate the cards
-                    papers.forEach(paper => {
-                        const card = document.createElement("div");
-                        card.classList.add("card");
-
-                        card.innerHTML = `
-                            <div class="card-body">
-                                <h5 class="card-title">${paper.subject} (${paper.subjectCode})</h5>
-                                <div class="details">
-                                    Course: <span>${paper.course}</span><br>
-                                    Semester: <span>${paper.semester}</span><br>
-                                    Branch: <span>${paper.branch}</span><br>
-                                    Question Paper: <span><a href="${paper.paperUrl}" class="card-link" target="_blank">Download Paper</a></span><br>
-                                </div>
-                            </div>
-                        `;
-                        container.appendChild(card);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                    alert('Failed to load data');
-                });
-        }
-
         // Logout function to clear session and redirect to login page
         function logout() {
             fetch('http://localhost:8080/api/auth/logout', {
@@ -222,9 +198,13 @@
                 });
         }
 
-        // Call the function to generate the cards when the page loads
-        window.onload = generateCards;
+        // Prevent download and show alert on clicking the "Download Paper" link
+        document.querySelectorAll('.download-paper').forEach(link => {
+            link.addEventListener('click', event => {
+                event.preventDefault(); // Prevent the default link behavior
+                alert('Unable to download paper.');
+            });
+        });
     </script>
-
 </body>
 </html>

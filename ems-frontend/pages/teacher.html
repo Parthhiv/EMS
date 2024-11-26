@@ -69,10 +69,6 @@
             <a class="nav-link" href="#" style="color: #49688e; text-decoration: none;" onclick="logout()">Logout</a>
         </nav>
 
-        <div class="alert alert-success alert-dismissible fade show" style="text-align: center; border-radius: 0;">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>Request has been accepted.
-        </div>
-
         <ul class="nav nav-tabs fstretch" role="tablist">
             <li class="nav-item stretch">
                 <a class="nav-link active text" data-toggle="tab" href="#prequest">Pending Requests</a>
@@ -97,11 +93,8 @@
                             Question Pattern: <a href="#" target="_blank" style="color: #49688e;">Question Pattern</a><br>
                             Total Marks: <span style="color: #49688e;">50</span><br>
                             Deadline: <span style="color: #49688e;">2024-12-31</span><br><br>
-                            <form method="POST">
-                                <input type="text" name="b_id" value="1" style="display: none;">
-                                <input type="submit" class="btn btn-primary accept" name="accept" value="Accept">
-                                <button type="button" class="btn btn-danger reject">Reject</button>
-                            </form>
+                            <button class="btn btn-primary accept" onclick="alert('Paper Accepted')">Accept</button>
+                            <button class="btn btn-danger reject" onclick="alert('Paper Rejected')">Reject</button>
                         </div>
                     </div>
                 </div><br>
@@ -121,26 +114,11 @@
                             Question Pattern: <a href="#" target="_blank" style="color: #49688e;">Question Pattern</a><br>
                             Total Marks: <span style="color: #49688e;">50</span><br>
                             Deadline: <span style="color: #49688e;">2024-12-31</span><br><br>
-                            <form method="POST" enctype="multipart/form-data">
-                                <div class="custom-file mb-3">
-                                    <input type="file" class="custom-file-input" id="customFile" name="paper" accept="application/pdf" required>
-                                    <label class="custom-file-label" for="customFile">Choose file</label>
-                                </div>
-                                <div class="modal fade" id="myModal">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">                          
-                                            <div class="modal-body">
-                                                Paper once uploaded cannot be changed. Are you sure you want to continue with the upload?
-                                                <div class="buttons">
-                                                    <button type="submit" class="btn btn-success btns">Continue</button>
-                                                    <button class="btn btn-danger btns" class="close" data-dismiss="modal">Go back</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#myModal" id="u_btn" disabled>Upload</button>
+                            <div class="custom-file mb-3">
+                                <input type="file" class="custom-file-input" id="customFile" name="paper" accept="application/pdf">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                            </div>
+                            <button class="btn btn-primary upload" onclick="handleUpload()">Upload</button>
                         </div>
                     </div>
                 </div><br>
@@ -149,46 +127,59 @@
     </div>
 
     <!-- Bootstrap JS and Popper.js -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        $(document).ready(function(){
-            $(".flip").click(function(){
-                $("#details").slideDown("slow");
+        $(document).ready(function() {
+            $(".flip").click(function() {
+                $("#details").slideToggle("slow");
             });
 
             $(".custom-file-input").on("change", function() {
                 var fileName = $(this).val().split("\\").pop();
                 $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-                $('#u_btn ').attr('disabled', false);
             });
         });
-        function logout() {
-            fetch('http://localhost:8080/api/auth/logout', {
-                method: 'POST',
-                credentials: 'include', // Include cookies for session handling
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-                .then(response => {
-                    if (response.ok) {
-                        localStorage.clear();
-                        sessionStorage.clear();
 
-                        // Redirect to the login page
-                        window.location.href = "http://127.0.0.1:5500/index.html";
-                    } else {
-                        alert('Logout failed. Please try again.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error during logout:', error);
-                    alert('An error occurred. Please try again.');
-                });
+        function handleUpload() {
+            const fileInput = document.getElementById("customFile");
+            if (fileInput.files.length > 0) {
+                alert("Paper uploaded successfully!");
+            } else {
+                alert("Please select a file before uploading.");
+            }
         }
+
+        function logout() {
+    fetch('http://localhost:8080/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include', // Include cookies for session handling
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+        .then(response => {
+            if (response.ok) {
+                localStorage.clear();
+                sessionStorage.clear();
+
+                // Redirect to the login page
+                window.location.href = "http://127.0.0.1:5500/index.html";
+            } else {
+                alert('Logout failed. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error during logout:', error);
+            alert('An error occurred. Please try again.');
+        });
+        }
+
     </script>
 </body>
 </html>
+
+
+
+

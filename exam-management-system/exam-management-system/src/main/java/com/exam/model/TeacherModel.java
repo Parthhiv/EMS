@@ -9,8 +9,7 @@ import jakarta.persistence.Id;
 public class TeacherModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private String name;
     private String email;
     private String subject;
@@ -18,18 +17,19 @@ public class TeacherModel {
 
     public TeacherModel() {}
 
-    public TeacherModel(String name, String email, String subject, String password) {
+    public TeacherModel(Long id,String name, String email, String subject, String password) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.subject = subject;
         this.password = password;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

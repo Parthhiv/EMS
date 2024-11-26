@@ -2,7 +2,6 @@ package com.exam.controller;
 
 import com.exam.model.TeacherModel;
 import com.exam.model.SuperintendentModel;
-import com.exam.model.PaperSubmissionModel;
 import com.exam.service.CoeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

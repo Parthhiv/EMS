@@ -1,11 +1,11 @@
 package com.exam.service;
 
 import com.exam.model.CoeModel;
-import com.exam.model.TeacherModel;
 import com.exam.model.SuperintendentModel;
+import com.exam.model.TeacherModel;
 import com.exam.repository.CoeRepository;
-import com.exam.repository.TeacherRepository;
 import com.exam.repository.SuperintendentRepository;
+import com.exam.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +23,17 @@ public class AuthService {
 
     public boolean authenticate(String role, Long id, String password) {
         switch (role.toLowerCase()) {
-            case "coe":
-                return coeRepository.findByIdAndPassword(id, password).isPresent();
             case "teacher":
-                return teacherRepository.findByIdAndPassword(id.intValue(), password).isPresent();
+                TeacherModel teacher = teacherRepository.findById(id).orElse(null);
+                return teacher != null && teacher.getPassword().equals(password);
+
             case "superintendent":
-                return superintendentRepository.findByIdAndPassword(id.intValue(), password).isPresent();
+                SuperintendentModel superintendent = superintendentRepository.findById(id).orElse(null);
+                return superintendent != null && superintendent.getPassword().equals(password);
+
+            case "coe":
+                CoeModel coe = coeRepository.findById(id).orElse(null);
+                return coe != null && coe.getPassword().equals(password);
             default:
                 return false;
         }
